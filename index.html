@@ -3,287 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디시인스티즈</title>
+    <title>디시인스티즈 - 관리자 모드</title>
     <style>
-        /* 기본 리셋 및 폰트 설정 */
-        * { box-sizing: border-box; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; }
-        body { margin: 0; background-color: #f4f5f7; color: #333; }
+        /* 기본 리셋 */
+        * { box-sizing: border-box; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #e9ecef; display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
+        ul { list-style: none; }
+        input, textarea, button { outline: none; }
+
+        /* 전체 레이아웃 (좌: 모바일 화면, 우: 관리자 패널) */
+        .app-wrapper {
+            display: flex;
+            gap: 30px;
+            max-width: 1000px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        /* =========================================
+           📱 좌측: 인스티즈 모바일 UI 클론
+           ========================================= */
+        .mobile-view {
+            width: 400px;
+            height: 850px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            border: 8px solid #333; /* 스마트폰 베젤 느낌 */
+        }
         
-        /* 인스티즈풍 초록색 상단바 */
-        .header {
-            background-color: #2db400; /* 인스티즈 특유의 초록색 */
-            padding: 15px 30px;
+        /* 스크롤바 숨기기 (모바일 느낌) */
+        .mobile-view::-webkit-scrollbar { display: none; }
+
+        /* 상단 헤더 (초록색) */
+        .iz-header {
+            background-color: #00b439; /* 인스티즈 메인 그린 */
+            color: white;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .logo { font-size: 22px; font-weight: 800; letter-spacing: -1px; cursor: pointer; }
-        
-        /* 검색창 */
-        .search-area { display: flex; gap: 5px; }
-        .search-area input {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-        }
-        .search-area button {
-            background-color: white;
-            color: #2db400;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .search-area button:hover { background-color: #e8f5e9; }
+        .iz-logo { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        .iz-icons { display: flex; gap: 15px; font-size: 18px; }
 
-        /* 메인 컨테이너 */
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        /* 섹션 공통 */
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2db400;
-            border-bottom: 2px solid #2db400;
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            display: inline-block;
-        }
-        .box { margin-bottom: 40px; }
-
-        /* 입력 및 버튼 폼 */
-        input[type="text"], input[type="datetime-local"], select, textarea {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            outline: none;
-        }
-        textarea { width: 100%; resize: vertical; margin-top: 10px; font-size: 14px; }
-        
-        .btn {
-            padding: 8px 12px;
-            background-color: #2db400;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .btn-edit { background-color: #f39c12; }
-        .btn-delete { background-color: #e74c3c; }
-
-        /* 리스트 (카테고리, 댓글) */
-        ul { list-style: none; padding: 0; margin: 0; }
-        li {
+        /* 탭 메뉴 */
+        .iz-tabs {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 10px;
+            padding: 0 10px;
             border-bottom: 1px solid #eee;
+            background: white;
+            position: sticky;
+            top: 48px;
+            z-index: 9;
+            overflow-x: auto;
+            white-space: nowrap;
         }
-        .controls { display: flex; gap: 5px; }
+        .iz-tabs::-webkit-scrollbar { display: none; }
+        .iz-tab { padding: 12px 12px; font-size: 15px; color: #555; cursor: pointer; }
+        .iz-tab.active { font-weight: bold; color: #000; border-bottom: 3px solid #00b439; }
 
-        /* 가짜 게시물 정보 */
-        .post-info-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        /* 게시글 영역 */
+        .iz-post { padding: 20px 15px; border-bottom: 8px solid #f4f5f7; }
+        .iz-post-header { margin-bottom: 15px; }
+        .iz-category-title { font-size: 18px; font-weight: 900; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .iz-new-btn { background: #00b439; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        
+        /* 서브 카테고리 태그들 */
+        .iz-sub-tags { display: flex; gap: 6px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .iz-sub-tags::-webkit-scrollbar { display: none; }
+        .iz-tag { border: 1px solid #ddd; padding: 4px 10px; border-radius: 15px; font-size: 13px; color: #555; white-space: nowrap; }
+        
+        .iz-title { font-size: 20px; font-weight: bold; line-height: 1.4; margin-bottom: 10px; word-break: break-all; }
+        .iz-meta { font-size: 12px; color: #999; display: flex; gap: 10px; align-items: center; }
+        .iz-meta-right { margin-left: auto; display: flex; align-items: center; gap: 5px; color: #00b439; font-weight: bold; }
+        
+        .iz-body { font-size: 16px; line-height: 1.6; color: #222; margin-top: 20px; min-height: 100px; white-space: pre-wrap; word-break: break-all; }
+        
+        .iz-actions { display: flex; justify-content: center; gap: 10px; margin-top: 30px; }
+        .iz-action-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: white; display: flex; align-items: center; justify-content: center; color: #555; }
+
+        /* 댓글 영역 */
+        .iz-comments { padding: 0; }
+        .iz-comment-item { padding: 15px; border-bottom: 1px solid #eee; display: flex; gap: 10px; }
+        .iz-c-profile { width: 30px; height: 30px; background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="%2300b439" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>') center/cover; }
+        .iz-c-right { flex: 1; }
+        .iz-c-name { font-size: 14px; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+        .iz-c-me { background: #00b439; color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; }
+        .iz-c-text { font-size: 15px; margin-bottom: 8px; word-break: break-all; }
+        .iz-c-meta { font-size: 12px; color: #999; display: flex; gap: 10px; }
+        
+        /* 하단 댓글 입력창 */
+        .iz-input-area { background: white; padding: 10px 15px; border-top: 1px solid #eee; position: sticky; bottom: 0; }
+        .iz-input-status { font-size: 12px; color: #999; margin-bottom: 8px; }
+        .iz-input-box { background: #f4f5f7; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+        .iz-input-box input { background: transparent; border: none; padding: 15px; font-size: 15px; width: 100%; }
+        .iz-input-bottom { background: #eee; padding: 10px; display: flex; align-items: center; gap: 10px; }
+        .iz-input-add { width: 25px; height: 25px; background: #d0e8d7; color: #00b439; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: none; cursor:pointer;}
+        .iz-input-hint { font-size: 13px; color: #555; text-align: center; flex: 1; }
+
+        /* 플로팅 버튼 */
+        .iz-fab-group { position: absolute; bottom: 80px; right: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .iz-fab { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; border: none; }
+        .iz-fab-green { background: #00b439; font-size: 14px; }
+        .iz-fab-gray { background: #777; font-size: 20px; }
+
+        /* =========================================
+           ⚙️ 우측: 관리자 제어 패널
+           ========================================= */
+        .admin-panel {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-height: 850px;
+            overflow-y: auto;
+        }
+        .admin-title { font-size: 20px; font-weight: bold; color: #d35400; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between;}
+        .sync-badge { background: #e74c3c; color: white; font-size: 12px; padding: 3px 8px; border-radius: 12px; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .admin-panel input[type="text"], .admin-panel input[type="datetime-local"], .admin-panel select, .admin-panel textarea {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;
+        }
+        .admin-panel textarea { resize: vertical; min-height: 100px; }
+        
+        .btn { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; color: white; }
+        .btn-green { background: #00b439; }
+        .btn-red { background: #e74c3c; }
+        .btn-gray { background: #7f8c8d; }
+
+        .manage-list { list-style: none; margin-top: 10px; border: 1px solid #eee; border-radius: 6px; max-height: 180px; overflow-y: auto; }
+        .manage-list li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .manage-list li:last-child { border-bottom: none; }
+        .manage-actions { display: flex; gap: 5px; }
     </style>
 </head>
 <body>
 
-    <!-- 상단바 -->
-    <header class="header">
-        <div class="logo">디시인스티즈</div>
-        <div class="search-area">
-            <input type="text" id="searchInput" placeholder="게시글 검색...">
-            <button onclick="searchPost()">검색</button>
-        </div>
-    </header>
-
-    <main class="container">
+    <div class="app-wrapper">
         
-        <!-- 1. 카테고리 관리 영역 -->
-        <div class="box">
-            <div class="section-title">카테고리 설정</div>
-            <div style="margin-bottom: 10px; display: flex; gap: 5px;">
-                <input type="text" id="newCategory" placeholder="추가할 카테고리명 입력" style="flex: 1;">
-                <button class="btn" onclick="addCategory()">추가</button>
-            </div>
-            <ul id="categoryList">
-                <!-- 자바스크립트로 렌더링 -->
-            </ul>
-        </div>
-
-        <!-- 2. 게시글 조작 영역 -->
-        <div class="box" style="background-color: #fbfbfb; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
-            <div class="section-title" style="border-bottom-color: #333; color: #333;">게시글 본문 조작</div>
+        <div class="mobile-view" id="mobileView">
             
-            <div class="post-info-row">
-                <div>
-                    <label style="font-size: 13px; font-weight: bold;">카테고리 선택:</label>
-                    <select id="postCategorySelect"></select>
-                </div>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <label style="font-size: 13px; font-weight: bold;">글 쓴 날짜 조작:</label>
-                    <input type="datetime-local" id="dateInput">
-                    <button class="btn" onclick="applyDate()">날짜 적용</button>
+            <div class="iz-header">
+                <div class="iz-logo">:) instiz</div>
+                <div class="iz-icons">
+                    <span>↗️</span>
+                    <span>🔔</span>
+                    <span>🔍</span>
+                    <span>≡</span>
                 </div>
             </div>
 
-            <div style="font-size: 12px; color: #888; margin-bottom: 10px;">
-                현재 표시되는 작성일: <span id="displayDate" style="color: #2db400; font-weight: bold;"></span>
+            <div class="iz-tabs">
+                <span class="iz-tab">HOT</span>
+                <span class="iz-tab">이슈</span>
+                <span class="iz-tab active" id="viewTab">일상</span>
+                <span class="iz-tab">연예</span>
+                <span class="iz-tab">드영배</span>
+                <span class="iz-tab">장터</span>
             </div>
 
-            <input type="text" placeholder="제목을 입력하세요" style="width: 100%; font-size: 18px; font-weight: bold; border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 10px 5px;">
-            <textarea rows="6" placeholder="여기에 게시글 내용을 작성하세요..."></textarea>
-        </div>
+            <div class="iz-post">
+                <div class="iz-post-header">
+                    <div class="iz-category-title">
+                        <span id="viewCategoryTitle">일상 ⭐️</span>
+                        <span class="iz-new-btn">✏️ 새 글</span>
+                    </div>
+                    <div class="iz-sub-tags">
+                        <span class="iz-tag">+ 신설 요청</span>
+                        <span class="iz-tag">고민(성고민X)</span>
+                        <span class="iz-tag">맛집/음식</span>
+                        <span class="iz-tag">반려동물</span>
+                    </div>
+                </div>
 
-        <!-- 3. 댓글 관리 영역 -->
-        <div class="box">
-            <div class="section-title">댓글 목록</div>
-            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                <input type="text" id="newComment" placeholder="댓글을 남겨보세요..." style="flex: 1;">
-                <button class="btn" onclick="addComment()">등록</button>
+                <div class="iz-title" id="viewTitle">근데 주말에 이렇게 글 많은 거 난 너무 신기함</div>
+                
+                <div class="iz-meta">
+                    <span id="viewTimeText">14초전</span> | 조회 4 | 현재 4
+                    <div class="iz-meta-right">
+                        <span>:) 인스티즈</span>
+                        <span style="color:#999; margin-left:5px;">•••</span>
+                    </div>
+                </div>
+
+                <div class="iz-body" id="viewBody">여기 여초인데 여자들은 다 주말에 약속있고 그러지 않나?
+
+왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임</div>
+
+                <div class="iz-actions">
+                    <button class="iz-action-btn">🔖</button>
+                    <button class="iz-action-btn">👍</button>
+                    <button class="iz-action-btn">•••</button>
+                </div>
             </div>
-            <ul id="commentList">
-                <!-- 자바스크립트로 렌더링 -->
-            </ul>
+
+            <div class="iz-comments" id="viewCommentList">
+                </div>
+
+            <div class="iz-input-area">
+                <div class="iz-input-status">누군가 댓글을 입력 중이에요•••</div>
+                <div class="iz-input-box">
+                    <input type="text" id="userCommentInput" placeholder="댓글 입력" onkeypress="if(event.key==='Enter') addUserComment()">
+                    <div class="iz-input-bottom">
+                        <button class="iz-input-add" onclick="addUserComment()">+</button>
+                        <div class="iz-input-hint" onclick="addUserComment()" style="cursor:pointer;">확인 또는 엔터키 연타</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="iz-fab-group">
+                <button class="iz-fab iz-fab-green">🔥<br>인기글</button>
+                <button class="iz-fab iz-fab-gray">•••</button>
+            </div>
+
         </div>
 
-    </main>
+        <div class="admin-panel">
+            <div class="admin-title">
+                <span>⚙️ 디시인스티즈 관리자 패널</span>
+                <span class="sync-badge">실시간 동기화 ON</span>
+            </div>
+
+            <div class="form-group">
+                <label>카테고리 (탭) 설정</label>
+                <select id="adminCategorySelect" onchange="syncPost()"></select>
+            </div>
+            <div class="form-group">
+                <label>게시글 제목</label>
+                <input type="text" id="adminTitle" oninput="syncPost()">
+            </div>
+            <div class="form-group">
+                <label>게시글 본문</label>
+                <textarea id="adminBody" oninput="syncPost()"></textarea>
+            </div>
+            <div class="form-group">
+                <label>작성 시간 조작 (표시용 텍스트)</label>
+                <input type="text" id="adminTimeText" value="14초전" oninput="syncPost()" placeholder="예: 14초전, 2026.06.06 15:00">
+            </div>
+
+            <hr style="border:0; border-bottom:1px solid #eee; margin: 25px 0;">
+
+            <div class="form-group">
+                <label>카테고리 관리 (DB)</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="newCategoryInput" placeholder="새 탭 이름">
+                    <button class="btn btn-green" onclick="addCategory()">추가</button>
+                </div>
+                <ul class="manage-list" id="adminCategoryList"></ul>
+            </div>
+
+            <hr style="border:0; border-bottom:1px solid #eee; margin: 25px 0;">
+
+            <div class="form-group">
+                <label>댓글 강제 삭제 및 수정 (실시간 제어)</label>
+                <ul class="manage-list" id="adminCommentList"></ul>
+            </div>
+
+        </div>
+
+    </div>
 
     <script>
-        // --- 상태 관리 ---
-        let categories = ['유머', '일상', '익명', '연예'];
-        let comments = ['초록색 상단바 이쁘네요!', '디시인스티즈 화이팅!!'];
+        // --- 데이터 상태 (DB 역할) ---
+        let state = {
+            category: '일상',
+            title: '근데 주말에 이렇게 글 많은 거 난 너무 신기함',
+            body: '여기 여초인데 여자들은 다 주말에 약속있고 그러지 않나?\n\n왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임',
+            timeText: '14초전'
+        };
+
+        let categories = ['HOT', '이슈', '일상', '연예', '드영배', '장터'];
         
-        // --- 1. 검색 기능 ---
-        function searchPost() {
-            const keyword = document.getElementById('searchInput').value;
-            if(!keyword) return alert('검색어를 입력해주세요.');
-            alert(`"${keyword}"에 대한 검색 결과가 없습니다.\n(가짜 커뮤니티라서 검색 기능은 연출입니다😉)`);
+        let comments = [
+            { id: 1, text: '냐도 신기해ㅜㅜ', time: '지금막', isMe: true },
+            { id: 2, text: '다들 집에서 쉬는거지 ㅋㅋㅋ', time: '1분전', isMe: false }
+        ];
+        let commentId = 3;
+
+        // --- 초기화 ---
+        window.onload = () => {
+            // 관리자 패널 인풋창 초기값 세팅
+            document.getElementById('adminTitle').value = state.title;
+            document.getElementById('adminBody').value = state.body;
+            document.getElementById('adminTimeText').value = state.timeText;
+            
+            refreshUI();
+        };
+
+        function refreshUI() {
+            renderPost();
+            renderCategories();
+            renderComments();
         }
 
-        // --- 2. 카테고리 기능 ---
-        function renderCategories() {
-            const list = document.getElementById('categoryList');
-            const select = document.getElementById('postCategorySelect');
-            list.innerHTML = '';
-            select.innerHTML = '';
+        // --- 1. 게시글 동기화 ---
+        function syncPost() {
+            state.title = document.getElementById('adminTitle').value;
+            state.body = document.getElementById('adminBody').value;
+            state.timeText = document.getElementById('adminTimeText').value;
+            state.category = document.getElementById('adminCategorySelect').value;
+            renderPost();
+        }
 
-            categories.forEach((cat, index) => {
-                // 리스트 렌더링
+        function renderPost() {
+            // 모바일 뷰어 업데이트
+            document.getElementById('viewTab').textContent = state.category;
+            document.getElementById('viewCategoryTitle').innerHTML = `${state.category} ⭐️`;
+            document.getElementById('viewTitle').textContent = state.title;
+            document.getElementById('viewBody').textContent = state.body;
+            document.getElementById('viewTimeText').textContent = state.timeText;
+        }
+
+        // --- 2. 카테고리 관리 ---
+        function renderCategories() {
+            const select = document.getElementById('adminCategorySelect');
+            const list = document.getElementById('adminCategoryList');
+            select.innerHTML = '';
+            list.innerHTML = '';
+
+            categories.forEach((cat, idx) => {
+                // 셀렉트 박스
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                if(cat === state.category) opt.selected = true;
+                select.appendChild(opt);
+
+                // 관리자 리스트
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <span>📁 ${cat}</span>
-                    <div class="controls">
-                        <button class="btn btn-edit" onclick="editCategory(${index})">수정</button>
-                        <button class="btn btn-delete" onclick="deleteCategory(${index})">삭제</button>
+                    <span>${cat}</span>
+                    <div class="manage-actions">
+                        <button class="btn btn-red" style="padding:4px 8px; font-size:11px;" onclick="deleteCategory(${idx})">삭제</button>
                     </div>
                 `;
                 list.appendChild(li);
-
-                // 셀렉트 박스 렌더링
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = cat;
-                select.appendChild(option);
             });
         }
 
         function addCategory() {
-            const input = document.getElementById('newCategory');
-            if(input.value.trim() === '') return alert('카테고리명을 입력하세요.');
-            categories.push(input.value.trim());
+            const input = document.getElementById('newCategoryInput');
+            const val = input.value.trim();
+            if(!val) return;
+            if(categories.includes(val)) return alert('이미 존재합니다.');
+            categories.push(val);
             input.value = '';
             renderCategories();
         }
 
-        function editCategory(index) {
-            const newName = prompt('수정할 카테고리 이름을 입력하세요:', categories[index]);
-            if(newName && newName.trim() !== '') {
-                categories[index] = newName.trim();
-                renderCategories();
+        function deleteCategory(idx) {
+            if(categories.length <= 1) return alert('최소 1개의 카테고리는 필요합니다.');
+            if(confirm(`'${categories[idx]}' 탭을 삭제하시겠습니까?`)) {
+                if(state.category === categories[idx]) state.category = categories[0];
+                categories.splice(idx, 1);
+                refreshUI();
             }
         }
 
-        function deleteCategory(index) {
-            if(confirm('정말 이 카테고리를 삭제하시겠습니까?')) {
-                categories.splice(index, 1);
-                renderCategories();
-            }
-        }
-
-        // --- 3. 날짜 조작 기능 ---
-        function applyDate() {
-            const dateInput = document.getElementById('dateInput').value;
-            if(!dateInput) return alert('날짜를 먼저 선택해주세요!');
-            
-            // 날짜 포맷 예쁘게 변경
-            const dateObj = new Date(dateInput);
-            const formatted = `${dateObj.getFullYear()}.${String(dateObj.getMonth()+1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
-            
-            document.getElementById('displayDate').textContent = formatted;
-        }
-
-        // 초기 날짜 세팅
-        window.onload = () => {
-            renderCategories();
-            renderComments();
-            
-            // 현재 시간을 기본값으로
-            const now = new Date();
-            const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
-            document.getElementById('dateInput').value = localIso;
-            applyDate();
-        }
-
-        // --- 4. 댓글 기능 ---
+        // --- 3. 댓글 관리 ---
         function renderComments() {
-            const list = document.getElementById('commentList');
-            list.innerHTML = '';
-            
-            if(comments.length === 0) {
-                list.innerHTML = '<li style="color: #999; justify-content: center;">등록된 댓글이 없습니다.</li>';
-                return;
-            }
+            const viewList = document.getElementById('viewCommentList');
+            const adminList = document.getElementById('adminCommentList');
+            viewList.innerHTML = '';
+            adminList.innerHTML = '';
 
-            comments.forEach((comment, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>💬 ${comment}</span>
-                    <button class="btn btn-delete" onclick="deleteComment(${index})">삭제</button>
+            comments.forEach((c, index) => {
+                // 모바일 뷰어 렌더링
+                const meBadge = c.isMe ? `<span class="iz-c-me">나</span>` : '';
+                viewList.innerHTML += `
+                    <div class="iz-comment-item">
+                        <div class="iz-c-profile"></div>
+                        <div class="iz-c-right">
+                            <div class="iz-c-name">익인${index + 1} ${meBadge} <span style="margin-left:auto; color:#999;">•••</span></div>
+                            <div class="iz-c-text">${c.text}</div>
+                            <div class="iz-c-meta">
+                                <span>답글</span>
+                                <span>${c.time}</span>
+                            </div>
+                        </div>
+                    </div>
                 `;
-                list.appendChild(li);
+
+                // 관리자 패널 렌더링
+                adminList.innerHTML += `
+                    <li>
+                        <span style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">익인${index+1}: ${c.text}</span>
+                        <div class="manage-actions">
+                            <button class="btn btn-gray" style="padding:4px 8px; font-size:11px;" onclick="editComment(${c.id})">수정</button>
+                            <button class="btn btn-red" style="padding:4px 8px; font-size:11px;" onclick="deleteComment(${c.id})">삭제</button>
+                        </div>
+                    </li>
+                `;
             });
         }
 
-        function addComment() {
-            const input = document.getElementById('newComment');
-            if(input.value.trim() === '') return alert('댓글 내용을 입력하세요.');
-            comments.push(input.value.trim());
+        function addUserComment() {
+            const input = document.getElementById('userCommentInput');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            comments.push({
+                id: commentId++,
+                text: text,
+                time: '지금막',
+                isMe: true
+            });
             input.value = '';
             renderComments();
+            
+            // 새 댓글 작성시 스크롤 맨 아래로
+            const mobileView = document.getElementById('mobileView');
+            setTimeout(() => { mobileView.scrollTop = mobileView.scrollHeight; }, 50);
         }
 
-        function deleteComment(index) {
-            if(confirm('이 댓글을 삭제할까요?')) {
-                comments.splice(index, 1);
+        function editComment(id) {
+            const c = comments.find(x => x.id === id);
+            if(!c) return;
+            const newText = prompt('댓글 내용 수정:', c.text);
+            if(newText !== null && newText.trim() !== '') {
+                c.text = newText.trim();
+                renderComments();
+            }
+        }
+
+        function deleteComment(id) {
+            if(confirm('이 댓글을 영구 삭제하시겠습니까?')) {
+                comments = comments.filter(x => x.id !== id);
                 renderComments();
             }
         }
     </script>
 </body>
 </html>
-
