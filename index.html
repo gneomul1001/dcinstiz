@@ -241,7 +241,9 @@
     const defaultAliases = ["글쓴이", "익인1", "익인2"]; // 기본 닉네임 목록
     const defaultPosts = [
         { id: 1, type: "일상", title: "주말에 글 많은 거 너무 신기함", image: null, author: "익명", views: 12, body: "여기 여초인데 여자들은 다 주말에 약속있고 그러지 않나? 왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임" },
-        { id: 2, type: "연예", title: "나 진짜 김지민 친친에 들어가고 싶음...", image: 'https://via.placeholder.com/60/ff9999', author: "익명", views: 45, body: "친친 너무 부러움..." }
+        { id: 2, type: "연예", title: "나 진짜 김지민 친친에 들어가고 싶음...", image: 'https://via.placeholder.com/60/ff9999', author: "익명", views: 45, body: "친친 너무 부러움..." },
+        { id: 3, type: "이슈", title: "인플루언서들은 다 이래??", image: 'https://via.placeholder.com/60/99ff99', author: "익명", views: 120, body: "다들 협찬만 받고 사는듯" },
+        { id: 4, type: "드영배", title: "어제 드라마 전개 진짜 충격", image: null, author: "익명", views: 33, body: "대박이지 않음?" }
     ];
     const defaultComments = [
         { id: 101, postId: 1, author: "익인1", text: "냐도 신기해ㅜㅠ", date: "지금막", isMe: false }
@@ -253,6 +255,9 @@
     let postComments = JSON.parse(localStorage.getItem('dcInstiz_comments')) || defaultComments;
     
     let currentOpenPostId = null; 
+    
+    // 현재 선택된 카테고리 (기본값: 첫 번째 카테고리)
+    let currentCategory = categories[0] || "HOT";
 
     function saveData() {
         localStorage.setItem('dcInstiz_categories', JSON.stringify(categories));
@@ -268,10 +273,15 @@
         categories.forEach((cat, index) => {
             const span = document.createElement('span');
             span.textContent = cat;
-            if (index === 0) span.classList.add('active');
+            
+            // 현재 선택된 카테고리에 active 클래스 부여
+            if (cat === currentCategory) span.classList.add('active');
+            
             span.onclick = () => {
+                currentCategory = cat; // 선택된 카테고리 업데이트
                 document.querySelectorAll('.category-bar span').forEach(s => s.classList.remove('active'));
                 span.classList.add('active');
+                renderPostList(); // 선택한 카테고리에 맞춰 게시글 갱신
             };
             bar.appendChild(span);
         });
@@ -279,9 +289,25 @@
 
     function renderPostList() {
         const listArea = document.getElementById('view-homepage');
-        listArea.innerHTML = `<div class="homepage-section-title">전체 인기글</div>`;
+        
+        // 첫 번째 카테고리(예: HOT)는 전체 글 보기로 설정
+        let filteredPosts = posts;
+        let sectionTitle = "전체 인기글";
 
-        posts.forEach(p => {
+        if (currentCategory !== categories[0]) {
+            // 선택된 카테고리와 게시글의 type이 같은 것만 필터링
+            filteredPosts = posts.filter(p => p.type === currentCategory);
+            sectionTitle = `${currentCategory} 게시판`;
+        }
+
+        listArea.innerHTML = `<div class="homepage-section-title">${sectionTitle}</div>`;
+
+        if (filteredPosts.length === 0) {
+            listArea.innerHTML += `<p style="text-align:center; color:#999; margin-top:40px;">등록된 게시글이 없습니다.</p>`;
+            return;
+        }
+
+        filteredPosts.forEach(p => {
             const commentCount = postComments.filter(c => c.postId === p.id).length;
             const postCard = document.createElement('div');
             postCard.classList.add('post-card');
@@ -400,20 +426,30 @@
 
     function deleteCategory(index) {
         if(confirm(`'${categories[index]}' 카테고리를 삭제하시겠습니까?`)) {
+            // 삭제하려는 카테고리가 현재 보고 있는 카테고리라면 첫 번째 카테고리로 변경
+            if (currentCategory === categories[index]) {
+                currentCategory = categories[0] || "HOT"; 
+            }
             categories.splice(index, 1);
             saveData();
             renderCategories();
             renderCategoryManageList();
+            renderPostList();
         }
     }
 
     function renameCategory(index) {
         const newName = prompt('새 카테고리명을 입력하세요:', categories[index]);
         if (newName && newName.trim() !== '') {
+            // 이름이 바뀐 카테고리를 현재 보고 있었다면 변수 동기화
+            if (currentCategory === categories[index]) {
+                currentCategory = newName.trim();
+            }
             categories[index] = newName.trim();
             saveData();
             renderCategories();
             renderCategoryManageList();
+            renderPostList();
         }
     }
 
