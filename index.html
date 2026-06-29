@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디시인스티즈 - DC-Instiz Proto (PC Version)</title>
+    <title>디시인스티즈 - DC-Instiz Proto</title>
     <style>
         /* Global Styles */
         body {
@@ -23,10 +23,10 @@
             --border-color: #e5e5e5;
         }
 
-        /* 메인 컨테이너 (PC 중심 꽉 채우기) */
+        /* 메인 컨테이너 */
         .app-container {
             width: 100%;
-            max-width: 100%; /* 기존 600px 제한 해제 */
+            max-width: 100%;
             margin: 0;
             background: #fff;
             min-height: 100vh;
@@ -37,200 +37,70 @@
 
         /* Header */
         .header {
-            height: 64px; /* PC에 맞게 높이 살짝 증가 */
+            height: 64px;
             background: var(--instiz-green);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 5%; /* PC용 좌우 여백 */
+            padding: 0 5%;
             color: white;
             position: sticky;
             top: 0;
             z-index: 50;
         }
 
-        .header .logo {
-            font-size: 24px; /* 로고 크기 확대 */
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header .icons {
-            display: flex;
-            gap: 24px; /* 아이콘 간격 확대 */
-            font-size: 22px;
-            cursor: pointer;
-        }
+        .header .logo { font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .header .icons { display: flex; gap: 24px; font-size: 22px; cursor: pointer; }
 
         /* Search Bar */
-        #search-container {
-            display: none;
-            background: white;
-            padding: 12px 5%;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        #search-container input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px 20px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            outline: none;
-            font-size: 15px;
-        }
+        #search-container { display: none; background: white; padding: 12px 5%; border-bottom: 1px solid var(--border-color); }
+        #search-container input { width: 100%; box-sizing: border-box; padding: 12px 20px; border: 1px solid var(--border-color); border-radius: 20px; outline: none; font-size: 15px; }
 
         /* Category Bar */
-        .category-bar {
-            height: 56px;
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+        .category-bar { height: 56px; background: white; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 5%; overflow-x: auto; white-space: nowrap; }
+        .category-bar span { margin-right: 24px; color: #333; font-weight: 500; font-size: 16px; cursor: pointer; padding: 16px 0; }
+        .category-bar span.active { color: var(--instiz-green); font-weight: bold; border-bottom: 3px solid var(--instiz-green); }
 
-        .category-bar span {
-            margin-right: 24px;
-            color: #333;
-            font-weight: 500;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 16px 0;
-        }
-
-        .category-bar span.active {
-            color: var(--instiz-green);
-            font-weight: bold;
-            border-bottom: 3px solid var(--instiz-green);
-        }
-
-        /* Floating Green Button (PC 해상도에 맞게 우측 고정) */
-        .floating-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 5%; /* 화면 우측 기준 정렬 */
-            background: var(--instiz-green);
-            width: 64px;
-            height: 64px;
-            border-radius: 32px;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 10;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .floating-btn:hover {
-            transform: scale(1.05);
-        }
+        /* Floating Green Button */
+        .floating-btn { position: fixed; bottom: 90px; right: 5%; background: var(--instiz-green); width: 64px; height: 64px; border-radius: 32px; color: white; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10; cursor: pointer; transition: transform 0.2s; }
+        .floating-btn:hover { transform: scale(1.05); }
 
         /* Content Area */
-        #content-area {
-            padding: 24px 5%; /* PC에 맞춘 여백 */
-            background-color: white;
-        }
-
+        #content-area { padding: 24px 5%; background-color: white; }
         .homepage-section-title { color: var(--instiz-green); font-weight: bold; margin-bottom: 16px; font-size: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .post-card { border-bottom: 1px solid var(--border-color); padding: 16px 10px; display: flex; align-items: center; cursor: pointer; transition: background 0.2s; }
         .post-card:hover { background-color: #f8f9fa; }
-        
         .post-type { font-size: 13px; color: #777; border: 1px solid #ccc; padding: 2px 6px; margin-right: 12px; border-radius: 4px; display: inline-block; min-width: 40px; text-align: center; }
         .post-title { font-size: 16px; flex: 1; line-height: 1.5; display: flex; align-items: center; }
         .post-image-preview { width: 60px; height: 60px; margin-left: 20px; background-size: cover; background-position: center; border-radius: 6px; }
         .post-comments { color: var(--instiz-green); font-size: 14px; margin-left: 8px; font-weight: bold; }
 
-        /* Bottom Menu (PC 가로 길이에 맞춤) */
-        .bottom-menu {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 100%; /* 제한 해제 */
-            height: 60px;
-            background: white;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            font-size: 20px;
-            color: var(--dark-gray);
-            z-index: 50;
-        }
-
+        /* Bottom Menu */
+        .bottom-menu { position: fixed; bottom: 0; width: 100%; max-width: 100%; height: 60px; background: white; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; font-size: 20px; color: var(--dark-gray); z-index: 50; }
         .bottom-menu-icon { text-align: center; cursor: pointer; width: 25%; padding: 10px 0; transition: background 0.2s; }
         .bottom-menu-icon:hover { background: #f0f0f0; }
         .bottom-menu-icon span { font-size: 12px; display: block; margin-top: 4px; }
         .bottom-menu .home { color: var(--instiz-green); }
 
-        /* =========================================
-           Modal (Popup) Styles - PC 확장형
-           ========================================= */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 40px; /* 여백 확대 */
-        }
-
-        .modal-content {
-            background: #fff;
-            width: 100%;
-            max-width: 800px; /* 모달 너비 PC 사이즈로 확장 */
-            max-height: 85vh;
-            border-radius: 12px;
-            overflow-y: auto;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .modal-header {
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
+        /* Modal Styles */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: 1000; justify-content: center; align-items: center; padding: 40px; }
+        .modal-content { background: #fff; width: 100%; max-width: 800px; max-height: 85vh; border-radius: 12px; overflow-y: auto; position: relative; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-header { padding: 20px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10; }
         .modal-header h2 { margin: 0; font-size: 20px; font-weight: bold; }
         .btn-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #333; transition: color 0.2s; }
         .btn-close:hover { color: red; }
-
         .modal-body { padding: 30px; flex-grow: 1; overflow-y: auto; }
 
-        /* 카테고리 관리 모달 전용 */
+        /* 카테고리/닉네임 리스트 관리 공통 */
         .cat-list { list-style: none; padding: 0; margin: 0 0 20px 0; }
-        .cat-list li {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee; font-size: 16px;
-        }
-        .cat-actions button {
-            background: #eee; border: 1px solid #ddd; padding: 6px 12px;
-            border-radius: 4px; font-size: 13px; cursor: pointer; margin-left: 8px;
-        }
+        .cat-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 16px; }
+        .cat-actions button { background: #eee; border: 1px solid #ddd; padding: 6px 12px; border-radius: 4px; font-size: 13px; cursor: pointer; margin-left: 8px; }
         .cat-actions button.del-btn { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .cat-add-area { display: flex; gap: 10px; margin-top: 20px; }
         .cat-add-area input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; }
         .cat-add-area button { padding: 10px 24px; background: var(--instiz-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 15px; }
 
-        /* 게시글 보기 모달 전용 */
+        /* 게시글 & 댓글 보기 모달 전용 */
         .post-meta { font-size: 14px; color: #777; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .post-author { display: flex; align-items: center; gap: 5px; font-size: 14px; }
         .post-title-main { font-size: 26px; font-weight: bold; line-height: 1.4; margin-top: 0; margin-bottom: 20px; color: #222; }
@@ -248,15 +118,22 @@
         .comment .author-meta .is-me { background: var(--instiz-green); color: white; font-size: 11px; border-radius: 10px; padding: 2px 8px; }
         .comment .time { color: #888; font-size: 12px; margin-top: 5px; }
         .comment .text { font-size: 15px; line-height: 1.5; margin-bottom: 5px; color: #222; }
-        .comment-delete-btn { background: none; border: none; color: #ee5253; cursor: pointer; font-size: 13px; position: absolute; right: 0; top: 0; text-decoration: underline; }
+        
+        /* 댓글 수정/삭제 버튼 컨테이너 */
+        .comment-action-btns { position: absolute; right: 0; top: 0; display: flex; gap: 8px; }
+        .comment-btn { background: none; border: none; font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0; }
+        .comment-btn.edit { color: #3498db; }
+        .comment-btn.delete { color: #ee5253; }
 
         /* 모달 내 댓글 입력창 */
         .comment-input-area {
-            position: sticky; bottom: 0; background: white; border-top: 1px solid var(--border-color); padding: 20px 30px; display: flex; gap: 15px; z-index: 10;
+            position: sticky; bottom: 0; background: white; border-top: 1px solid var(--border-color); padding: 20px 30px; display: flex; gap: 10px; z-index: 10; align-items: center;
         }
-        .comment-input-area input { flex: 1; padding: 14px 20px; border: 1px solid #ccc; border-radius: 25px; outline: none; font-size: 15px; transition: border 0.2s; }
-        .comment-input-area input:focus { border-color: var(--instiz-green); }
-        .comment-input-area button { background: var(--instiz-green); color: white; border: none; border-radius: 25px; padding: 0 25px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .comment-input-area select { padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; outline: none; }
+        .comment-input-area .manage-alias-btn { background: #eee; border: 1px solid #ddd; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 12px; white-space: nowrap; }
+        .comment-input-area input[type="text"] { flex: 1; padding: 14px 20px; border: 1px solid #ccc; border-radius: 25px; outline: none; font-size: 15px; transition: border 0.2s; }
+        .comment-input-area input[type="text"]:focus { border-color: var(--instiz-green); }
+        .comment-input-area button.submit-btn { background: var(--instiz-green); color: white; border: none; border-radius: 25px; padding: 0 25px; font-weight: bold; cursor: pointer; font-size: 15px; height: 100%; min-height: 48px; }
     </style>
 </head>
 <body>
@@ -279,14 +156,12 @@
         <input type="text" id="search-input" placeholder="검색어를 입력하세요...">
     </div>
 
-    <div class="category-bar" id="cat-bar">
-        </div>
+    <div class="category-bar" id="cat-bar"></div>
 
     <div class="floating-btn">인기글</div>
 
     <div id="content-area">
-        <div id="view-homepage">
-            </div>
+        <div id="view-homepage"></div>
     </div>
 
     <div class="bottom-menu">
@@ -298,17 +173,32 @@
 </div>
 
 <div class="modal-overlay" id="categoryModal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h2>카테고리 관리</h2>
             <button class="btn-close" onclick="closeModal('categoryModal')">×</button>
         </div>
         <div class="modal-body">
-            <ul class="cat-list" id="cat-manage-list">
-                </ul>
+            <ul class="cat-list" id="cat-manage-list"></ul>
             <div class="cat-add-area">
                 <input type="text" id="new-cat-name" placeholder="새 카테고리명 입력">
                 <button onclick="addCategory()">추가</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="aliasModal">
+    <div class="modal-content" style="max-width: 500px; max-height: 70vh;">
+        <div class="modal-header">
+            <h2>익명 닉네임 관리</h2>
+            <button class="btn-close" onclick="closeModal('aliasModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <ul class="cat-list" id="alias-manage-list"></ul>
+            <div class="cat-add-area">
+                <input type="text" id="new-alias-name" placeholder="새 닉네임 입력 (예: 익인3)">
+                <button onclick="addAlias()">추가</button>
             </div>
         </div>
     </div>
@@ -333,12 +223,14 @@
                 <button class="post-action-btn">👍 추천</button>
             </div>
 
-            <div class="comment-section" id="modal-comment-section">
-                </div>
+            <div class="comment-section" id="modal-comment-section"></div>
         </div>
+        
         <div class="comment-input-area">
+            <select id="alias-select"></select>
+            <button class="manage-alias-btn" onclick="openAliasModal()">관리</button>
             <input type="text" id="new-comment-text" placeholder="댓글을 남겨보세요." onkeypress="if(event.key === 'Enter') addComment()">
-            <button onclick="addComment()">등록</button>
+            <button class="submit-btn" onclick="addComment()">등록</button>
         </div>
     </div>
 </div>
@@ -346,18 +238,17 @@
 <script>
     // --- LocalStorage 설정 및 기본 데이터 ---
     const defaultCategories = ["HOT", "이슈", "일상", "연예", "드영배", "장터"];
+    const defaultAliases = ["글쓴이", "익인1", "익인2"]; // 기본 닉네임 목록
     const defaultPosts = [
         { id: 1, type: "일상", title: "주말에 글 많은 거 너무 신기함", image: null, author: "익명", views: 12, body: "여기 여초인데 여자들은 다 주말에 약속있고 그러지 않나? 왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임" },
-        { id: 2, type: "연예", title: "나 진짜 김지민 친친에 들어가고 싶음...", image: 'https://via.placeholder.com/60/ff9999', author: "익명", views: 45, body: "친친 너무 부러움..." },
-        { id: 3, type: "이슈", title: "인플루언서들은 다 이래??", image: 'https://via.placeholder.com/60/99ff99', author: "익명", views: 120, body: "다들 협찬만 받고 사는듯" },
-        { id: 4, type: "정보기타", title: "추미애 아들 추씨 아닌 거 들을 때마다 충격...", image: null, author: "익명", views: 33, body: "몰랐음..." }
+        { id: 2, type: "연예", title: "나 진짜 김지민 친친에 들어가고 싶음...", image: 'https://via.placeholder.com/60/ff9999', author: "익명", views: 45, body: "친친 너무 부러움..." }
     ];
     const defaultComments = [
         { id: 101, postId: 1, author: "익인1", text: "냐도 신기해ㅜㅠ", date: "지금막", isMe: false }
     ];
 
-    // 스토리지에서 불러오거나 기본값 세팅
     let categories = JSON.parse(localStorage.getItem('dcInstiz_categories')) || defaultCategories;
+    let aliases = JSON.parse(localStorage.getItem('dcInstiz_aliases')) || defaultAliases;
     let posts = JSON.parse(localStorage.getItem('dcInstiz_posts')) || defaultPosts;
     let postComments = JSON.parse(localStorage.getItem('dcInstiz_comments')) || defaultComments;
     
@@ -365,6 +256,7 @@
 
     function saveData() {
         localStorage.setItem('dcInstiz_categories', JSON.stringify(categories));
+        localStorage.setItem('dcInstiz_aliases', JSON.stringify(aliases));
         localStorage.setItem('dcInstiz_posts', JSON.stringify(posts));
         localStorage.setItem('dcInstiz_comments', JSON.stringify(postComments));
     }
@@ -387,9 +279,7 @@
 
     function renderPostList() {
         const listArea = document.getElementById('view-homepage');
-        listArea.innerHTML = `
-            <div class="homepage-section-title">전체 인기글</div>
-        `;
+        listArea.innerHTML = `<div class="homepage-section-title">전체 인기글</div>`;
 
         posts.forEach(p => {
             const commentCount = postComments.filter(c => c.postId === p.id).length;
@@ -400,7 +290,6 @@
             const titleSpan = document.createElement('span');
             titleSpan.classList.add('post-title');
             titleSpan.innerHTML = `<span class="post-type">${p.type}</span> ${p.title} <span class="post-comments">${commentCount > 0 ? '[' + commentCount + ']' : ''}</span>`;
-
             postCard.appendChild(titleSpan);
 
             if (p.image) {
@@ -409,16 +298,78 @@
                 imgPreview.style.backgroundImage = `url('${p.image}')`;
                 postCard.appendChild(imgPreview);
             }
-
             listArea.appendChild(postCard);
         });
     }
 
-    // --- Search Feature ---
-    document.getElementById('search-icon').onclick = () => {
-        const container = document.getElementById('search-container');
-        container.style.display = container.style.display === 'block' ? 'none' : 'block';
-    };
+    // --- Alias Management (Nickname) ---
+    function renderAliasSelect() {
+        const select = document.getElementById('alias-select');
+        select.innerHTML = '';
+        aliases.forEach(alias => {
+            const option = document.createElement('option');
+            option.value = alias;
+            option.textContent = alias;
+            select.appendChild(option);
+        });
+    }
+
+    function openAliasModal() {
+        document.getElementById('aliasModal').style.display = 'flex';
+        renderAliasManageList();
+    }
+
+    function renderAliasManageList() {
+        const list = document.getElementById('alias-manage-list');
+        list.innerHTML = '';
+        aliases.forEach((alias, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${alias}</span>
+                <div class="cat-actions">
+                    <button onclick="renameAlias(${index})">수정</button>
+                    <button class="del-btn" onclick="deleteAlias(${index})">삭제</button>
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function addAlias() {
+        const name = document.getElementById('new-alias-name').value.trim();
+        if (name && !aliases.includes(name)) {
+            aliases.push(name);
+            saveData();
+            renderAliasManageList();
+            renderAliasSelect();
+            document.getElementById('new-alias-name').value = '';
+        } else if (aliases.includes(name)) {
+            alert('이미 존재하는 닉네임입니다.');
+        }
+    }
+
+    function deleteAlias(index) {
+        if(aliases.length <= 1) {
+            alert('최소 1개의 닉네임은 유지해야 합니다.');
+            return;
+        }
+        if(confirm(`'${aliases[index]}' 닉네임을 삭제하시겠습니까?`)) {
+            aliases.splice(index, 1);
+            saveData();
+            renderAliasManageList();
+            renderAliasSelect();
+        }
+    }
+
+    function renameAlias(index) {
+        const newName = prompt('새 닉네임명을 입력하세요:', aliases[index]);
+        if (newName && newName.trim() !== '') {
+            aliases[index] = newName.trim();
+            saveData();
+            renderAliasManageList();
+            renderAliasSelect();
+        }
+    }
 
     // --- Category Management (Modal) ---
     function openCategoryModal() {
@@ -431,13 +382,7 @@
         list.innerHTML = '';
         categories.forEach((cat, index) => {
             const li = document.createElement('li');
-            li.innerHTML = `
-                <span>${cat}</span>
-                <div class="cat-actions">
-                    <button onclick="renameCategory(${index})">수정</button>
-                    <button class="del-btn" onclick="deleteCategory(${index})">삭제</button>
-                </div>
-            `;
+            li.innerHTML = `<span>${cat}</span><div class="cat-actions"><button onclick="renameCategory(${index})">수정</button><button class="del-btn" onclick="deleteCategory(${index})">삭제</button></div>`;
             list.appendChild(li);
         });
     }
@@ -450,8 +395,6 @@
             renderCategories();
             renderCategoryManageList();
             document.getElementById('new-cat-name').value = '';
-        } else if (categories.includes(name)) {
-            alert('이미 존재하는 카테고리입니다.');
         }
     }
 
@@ -474,7 +417,7 @@
         }
     }
 
-    // --- Post & Comment Management (Modal) ---
+    // --- Post & Comment Management ---
     function openPostModal(postId) {
         currentOpenPostId = postId;
         const post = posts.find(p => p.id === postId);
@@ -487,6 +430,7 @@
         const commentCount = postComments.filter(c => c.postId === postId).length;
         document.getElementById('modal-post-info').textContent = `조회 ${post.views} | 댓글 ${commentCount}`;
 
+        renderAliasSelect(); // 게시글 열 때 닉네임 선택기 초기화
         renderComments(postId);
         document.getElementById('postModal').style.display = 'flex';
     }
@@ -506,6 +450,14 @@
             commentDiv.classList.add('comment');
             if (c.isMe) commentDiv.style.backgroundColor = '#f1f8e9'; 
 
+            // 내가 쓴 글이면 수정/삭제 버튼 표시
+            const actionBtns = c.isMe ? `
+                <div class="comment-action-btns">
+                    <button class="comment-btn edit" onclick="editComment(${c.id})">수정</button>
+                    <button class="comment-btn delete" onclick="deleteComment(${c.id})">삭제</button>
+                </div>
+            ` : '';
+
             commentDiv.innerHTML = `
                 <div class="avatar">👤</div>
                 <div class="content">
@@ -516,7 +468,7 @@
                     <div class="text">${c.text}</div>
                     <div class="time">${c.date} <span style="cursor:pointer; color:#999; margin-left:15px; text-decoration: underline;">답글</span></div>
                 </div>
-                ${c.isMe ? `<button class="comment-delete-btn" onclick="deleteComment(${c.id})">삭제</button>` : ''}
+                ${actionBtns}
             `;
             commentArea.appendChild(commentDiv);
         });
@@ -524,12 +476,14 @@
 
     function addComment() {
         const textInput = document.getElementById('new-comment-text');
+        const selectAlias = document.getElementById('alias-select').value;
         const text = textInput.value.trim();
+        
         if (text && currentOpenPostId !== null) {
             const newComment = {
                 id: Date.now(),
                 postId: currentOpenPostId,
-                author: "익명(나)", 
+                author: selectAlias, // 선택한 닉네임 사용
                 text: text,
                 date: "방금 전",
                 isMe: true
@@ -551,6 +505,18 @@
         }
     }
 
+    function editComment(commentId) {
+        const comment = postComments.find(c => c.id === commentId);
+        if(!comment) return;
+        
+        const newText = prompt('댓글을 수정하세요:', comment.text);
+        if(newText !== null && newText.trim() !== '') {
+            comment.text = newText.trim();
+            saveData();
+            renderComments(currentOpenPostId);
+        }
+    }
+
     function deleteComment(commentId) {
         if(confirm('댓글을 삭제하시겠습니까?')) {
             postComments = postComments.filter(c => c.id !== commentId);
@@ -565,12 +531,10 @@
         }
     }
 
-    // --- Modal 공통 기능 ---
+    // --- Modal 공통 닫기 처리 ---
     function closeModal(modalId) {
         document.getElementById(modalId).style.display = 'none';
-        if(modalId === 'postModal') {
-            currentOpenPostId = null;
-        }
+        if(modalId === 'postModal') currentOpenPostId = null;
     }
 
     window.onclick = function(event) {
