@@ -10,12 +10,11 @@
             font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", helvetica, "Apple SD Gothic Neo", sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background-color: #f0f2f5; /* PC에서 배경과 콘텐츠를 구분하기 위한 톤다운 */
             color: #333;
-            user-select: none; /* Make text unselectable to feel like a phone app */
+            user-select: none;
         }
 
-        /* Color Scheme */
         :root {
             --instiz-green: #28C76F;
             --light-gray: #f0f0f0;
@@ -24,38 +23,18 @@
             --border-color: #e5e5e5;
         }
 
-        /* Mobile Container to mimic a phone screen */
-        .phone-container {
-            width: 375px; /* Common mobile screen width */
-            height: 812px; /* Common mobile screen height */
+        /* 메인 컨테이너 (반응형) */
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
             background: #fff;
-            margin: 20px auto;
-            border: 10px solid #222;
-            border-radius: 40px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            min-height: 100vh;
             position: relative;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            padding-bottom: 60px; /* 하단 메뉴 공간 확보 */
         }
 
-        /* Fake Status Bar */
-        .status-bar {
-            height: 44px;
-            background: #28C76F;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 16px;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .status-bar .right-icons {
-            display: flex;
-            gap: 5px;
-        }
-
-        /* Header (like images 0, 1, 2) */
+        /* Header */
         .header {
             height: 56px;
             background: var(--instiz-green);
@@ -64,6 +43,9 @@
             justify-content: space-between;
             padding: 0 16px;
             color: white;
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .header .logo {
@@ -74,18 +56,14 @@
             gap: 5px;
         }
 
-        .header .logo img {
-            height: 24px;
-            border-radius: 50%;
-        }
-
         .header .icons {
             display: flex;
             gap: 16px;
             font-size: 18px;
+            cursor: pointer;
         }
 
-        /* Search Bar (Hidden by default, triggered by icon) */
+        /* Search Bar */
         #search-container {
             display: none;
             background: white;
@@ -94,7 +72,7 @@
         }
 
         #search-container input {
-            width: 100%;
+            width: calc(100% - 20px);
             padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 20px;
@@ -130,28 +108,11 @@
             padding-bottom: 13px;
         }
 
-        /* Category Management Panel */
-        #category-mgmt {
-            display: none;
-            background: white;
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        #category-mgmt button {
-            margin-right: 5px;
-            background: var(--light-gray);
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        /* Floating Green "인기글" Button */
+        /* Floating Green Button */
         .floating-btn {
-            position: absolute;
-            bottom: 60px;
-            right: 16px;
+            position: fixed;
+            bottom: 80px;
+            right: max(16px, calc(50% - 284px)); /* 화면 너비에 맞춰 버튼 위치 조정 */
             background: var(--instiz-green);
             width: 56px;
             height: 56px;
@@ -162,327 +123,32 @@
             align-items: center;
             font-size: 14px;
             font-weight: bold;
-            line-height: 1.2;
-            text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             z-index: 10;
+            cursor: pointer;
         }
 
-        /* Post Body (Content area) */
+        /* Content Area */
         #content-area {
-            height: calc(812px - 44px - 56px - 48px - 1px - 60px); /* Total height - status - header - cat - border - bottom menu */
-            overflow-y: auto;
             padding: 16px;
             background-color: white;
         }
 
-        /* Homepage View (as in image_2.png) */
-        #view-homepage {
-            display: block;
-        }
-
-        .homepage-ad {
-            width: 100%;
-            height: auto;
-            margin-bottom: 16px;
-        }
-
-        .homepage-section-title {
-            color: var(--instiz-green);
-            font-weight: bold;
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-
-        .post-card {
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 0;
-            display: flex;
-            align-items: flex-start;
-            cursor: pointer;
-        }
-
-        .post-type {
-            font-size: 12px;
-            color: #777;
-            border: 1px solid #ccc;
-            padding: 1px 4px;
-            margin-right: 8px;
-            border-radius: 2px;
-        }
-
-        .post-title {
-            font-size: 15px;
-            flex: 1;
-            line-height: 1.4;
-        }
-
-        .post-image-preview {
-            width: 50px;
-            height: 50px;
-            margin-left: 10px;
-            background-size: cover;
-            border-radius: 4px;
-        }
-
-        .post-comments {
-            color: var(--instiz-green);
-            font-size: 13px;
-            margin-left: 5px;
-        }
-
-        /* Post View (as in image_1.png) */
-        #view-post {
-            display: none;
-        }
-
-        .post-header {
-            margin-bottom: 16px;
-        }
-
-        .post-meta {
-            font-size: 13px;
-            color: #777;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #post-date-text {
-            color: #777;
-        }
-
-        .post-author {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-        }
-
-        .post-author img {
-            height: 16px;
-            border-radius: 50%;
-        }
-
-        .post-title-main {
-            font-size: 19px;
-            font-weight: bold;
-            line-height: 1.3;
-        }
-
-        .post-content-text {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #1a1a1a;
-            margin-bottom: 30px;
-        }
-
-        /* Date Manipulation Controls (for demo) */
-        #date-controls {
-            background: #fff8e1;
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ffe082;
-            border-radius: 4px;
-        }
-
-        #date-controls input {
-            width: 70px;
-            font-size: 12px;
-        }
-
-        #date-controls button {
-            font-size: 12px;
-        }
-
-        /* Specific Ad for Comment View (image_0.png) */
-        .comment-ad {
-            margin-top: 10px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 16px;
-        }
-
-        /* Comments Section (as in image_0.png) */
-        #comment-section {
-            border-top: 1px solid var(--border-color);
-            padding-top: 16px;
-        }
-
-        .comment {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 16px;
-            position: relative;
-        }
-
-        .comment .avatar {
-            font-size: 18px;
-            margin-right: 10px;
-        }
-
-        .comment .content {
-            flex: 1;
-        }
-
-        .comment .author-meta {
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-bottom: 2px;
-        }
-
-        .comment .author-meta .name {
-            font-weight: bold;
-        }
-
-        .comment .author-meta .is-me {
-            background: var(--instiz-green);
-            color: white;
-            font-size: 11px;
-            border-radius: 10px;
-            padding: 1px 6px;
-        }
-
-        .comment .author-meta .time {
-            color: #777;
-            font-size: 11px;
-        }
-
-        .comment .text {
-            font-size: 15px;
-            line-height: 1.4;
-        }
-
-        .comment-delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 0;
-            background: none;
-            border: none;
-            color: #ee5253;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* Comment Input Box (as in image_0.png) */
-        #comment-input-area {
-            position: absolute;
-            bottom: 60px;
-            left: 0;
-            width: 100%;
-            background: white;
-            border-top: 1px solid var(--border-color);
-            padding: 12px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            z-index: 5;
-        }
-
-        #comment-input-area .avatar-box {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        #comment-input-area .fake-input-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        #comment-input-area .meta-row {
-            font-size: 13px;
-            color: #999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #comment-input-area .meta-row strong {
-            color: #333;
-        }
-
-        #comment-input-area .input-box-main {
-            border: 1px solid var(--border-color);
-            background: var(--light-gray);
-            padding: 10px;
-            border-radius: 8px;
-            min-height: 60px;
-        }
-
-        #comment-input-area textarea {
-            width: 100%;
-            border: none;
-            background: transparent;
-            resize: none;
-            outline: none;
-            font-size: 15px;
-            font-family: inherit;
-        }
-
-        #comment-input-area .submit-row {
-            display: flex;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            background: var(--light-gray);
-            padding: 8px;
-            border-radius: 0 0 8px 8px;
-            margin-top: -1px;
-            justify-content: space-between;
-        }
-
-        #comment-input-area .add-icon {
-            font-size: 20px;
-            color: var(--dark-gray);
-            background: #e1f5fe;
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #comment-input-area .confirm-text {
-            color: #777;
-            font-size: 13px;
-        }
-
-        /* Action bar for post (from image_1.png) */
-        .post-action-bar {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 16px;
-            padding-bottom: 16px;
-        }
-
-        .post-action-btn {
-            border: 1px solid #ccc;
-            background: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .homepage-ad { width: 100%; height: auto; margin-bottom: 16px; border-radius: 8px; }
+        .homepage-section-title { color: var(--instiz-green); font-weight: bold; margin-bottom: 12px; font-size: 18px; }
+        .post-card { border-bottom: 1px solid var(--border-color); padding: 12px 0; display: flex; align-items: flex-start; cursor: pointer; }
+        .post-card:hover { background-color: #fbfbfb; }
+        .post-type { font-size: 12px; color: #777; border: 1px solid #ccc; padding: 1px 4px; margin-right: 8px; border-radius: 2px; }
+        .post-title { font-size: 15px; flex: 1; line-height: 1.4; }
+        .post-image-preview { width: 50px; height: 50px; margin-left: 10px; background-size: cover; background-position: center; border-radius: 4px; }
+        .post-comments { color: var(--instiz-green); font-size: 13px; margin-left: 5px; }
 
         /* Fake Mobile OS Bottom Menu */
         .bottom-menu {
-            position: absolute;
+            position: fixed;
             bottom: 0;
-            left: 0;
             width: 100%;
+            max-width: 600px;
             height: 60px;
             background: white;
             border-top: 1px solid var(--border-color);
@@ -491,147 +157,128 @@
             align-items: center;
             font-size: 18px;
             color: var(--dark-gray);
+            z-index: 50;
         }
 
-        .bottom-menu-icon {
-            text-align: center;
+        .bottom-menu-icon { text-align: center; cursor: pointer; width: 25%; }
+        .bottom-menu-icon span { font-size: 11px; display: block; margin-top: 2px; }
+        .bottom-menu .home { color: var(--instiz-green); }
+
+        /* =========================================
+           Modal (Popup) Styles - Post & Categories
+           ========================================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        .bottom-menu-icon span {
-            font-size: 11px;
-            display: block;
-            margin-top: 2px;
+        .modal-content {
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: 16px;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .bottom-menu .home {
-            color: var(--instiz-green);
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
         }
+        .modal-header h2 { margin: 0; font-size: 18px; font-weight: bold; }
+        .btn-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #333; }
+
+        .modal-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
+
+        /* 카테고리 관리 모달 전용 */
+        .cat-list { list-style: none; padding: 0; margin: 0 0 20px 0; }
+        .cat-list li {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #eee;
+        }
+        .cat-actions button {
+            background: #eee; border: 1px solid #ddd; padding: 5px 10px;
+            border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 5px;
+        }
+        .cat-actions button.del-btn { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+        .cat-add-area { display: flex; gap: 10px; }
+        .cat-add-area input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .cat-add-area button { padding: 8px 16px; background: var(--instiz-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        /* 게시글 보기 모달 전용 */
+        .post-meta { font-size: 13px; color: #777; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .post-author { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+        .post-title-main { font-size: 22px; font-weight: bold; line-height: 1.4; margin-top: 0; margin-bottom: 15px; }
+        .post-content-text { font-size: 16px; line-height: 1.6; color: #1a1a1a; margin-bottom: 30px; }
+        .post-action-bar { display: flex; justify-content: center; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border-color); padding: 16px 0; }
+        .post-action-btn { border: 1px solid #ccc; background: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; }
+        
+        .comment-section { border-top: 1px solid var(--border-color); padding-top: 16px; }
+        .comment { display: flex; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 16px; position: relative; }
+        .comment .avatar { font-size: 20px; margin-right: 10px; }
+        .comment .content { flex: 1; }
+        .comment .author-meta { font-size: 13px; display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+        .comment .author-meta .name { font-weight: bold; }
+        .comment .author-meta .is-me { background: var(--instiz-green); color: white; font-size: 11px; border-radius: 10px; padding: 2px 6px; }
+        .comment .time { color: #777; font-size: 11px; }
+        .comment .text { font-size: 15px; line-height: 1.4; margin-bottom: 5px; }
+        .comment-delete-btn { background: none; border: none; color: #ee5253; cursor: pointer; font-size: 12px; position: absolute; right: 0; top: 0; }
+
+        /* 모달 내 댓글 입력창 */
+        .comment-input-area {
+            position: sticky; bottom: 0; background: white; border-top: 1px solid var(--border-color); padding: 15px; display: flex; gap: 10px; z-index: 10;
+        }
+        .comment-input-area input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-size: 14px; }
+        .comment-input-area button { background: var(--instiz-green); color: white; border: none; border-radius: 20px; padding: 0 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="phone-container">
-    <!-- Fake Status Bar -->
-    <div class="status-bar">
-        <span>U+ 2:56</span>
-        <div class="right-icons">
-            <span>📶</span> <span>(29)</span>
-        </div>
-    </div>
-
-    <!-- Header (디시인스티즈 name as requested) -->
+<div class="app-container">
     <div class="header">
         <div class="logo">
-            <!-- Green check smiley logo approximation -->
             <span style="font-size: 24px;">✅</span>
             <span>디시인스티즈</span>
         </div>
         <div class="icons">
-            <span>✈️</span> <span>🔔<span style="font-size: 10px; position: absolute; color: red;">12</span></span> <span id="search-icon">🔍</span> <span>☰</span>
+            <span>✈️</span>
+            <span style="position: relative;">🔔<span style="font-size: 10px; position: absolute; top:-5px; right:-5px; color: white; background: red; border-radius: 50%; padding: 2px 4px;">12</span></span>
+            <span id="search-icon">🔍</span>
+            <span onclick="openCategoryModal()">☰</span>
         </div>
     </div>
 
-    <!-- Search input (Initially hidden) -->
     <div id="search-container">
         <input type="text" id="search-input" placeholder="검색어를 입력하세요...">
     </div>
 
-    <!-- Category Bar -->
     <div class="category-bar" id="cat-bar">
-        <!-- Rendered by JS -->
-    </div>
+        </div>
 
-    <!-- Category Management Panel -->
-    <div id="category-mgmt">
-        <span>카테고리 관리: </span>
-        <input type="text" id="new-cat-name" placeholder="카테고리명">
-        <button onclick="addCategory()">추가</button>
-        <button onclick="deleteCategory()">삭제</button>
-        <button onclick="renameCategory()">수정</button>
-    </div>
+    <div class="floating-btn">인기글</div>
 
-    <!-- Floating "인기글" Button -->
-    <div class="floating-btn">
-        인기글
-    </div>
-
-    <!-- Main Content Area -->
     <div id="content-area">
-
-        <!-- Homepage View (Like image_2.png) -->
         <div id="view-homepage">
-            <img src="images/ad_girl_y2k.jpg" alt="AD" class="homepage-ad"> <!-- Placeholder for image_2.png top ad -->
-            <div class="homepage-section-title">내가 마지막에 본 글 <span style="font-size: 13px; color: red;">🗑️</span></div>
-            <div class="post-card" onclick="openPost(1)">
-                <span class="post-type">잡담</span>
-                <span class="post-title">여자들이 한심하게 보는 남자 특징 <span class="post-comments">4</span></span>
-                <div class="post-image-preview" style="background-image: url('images/baked_goods.jpg');"></div> <!-- image_2.png baked goods approximation -->
             </div>
-
-            <div class="homepage-section-title" style="margin-top: 20px;">전체 인기글</div>
-            <!-- Rendered by JS -->
-        </div>
-
-        <!-- Post View (Like image_1.png and image_0.png combined) -->
-        <div id="view-post">
-            <div class="post-header">
-                <!-- Date Manipulation Controls (demo purpose) -->
-                <div id="date-controls">
-                    날짜 조작: <input type="text" id="fake-date-input" placeholder="14초전">
-                    <button onclick="updatePostDate()">변경</button>
-                </div>
-
-                <div class="post-meta">
-                    <div class="post-author"><img src="images/post_icon.png" alt="icon"> 인스티즈 <span>...</span></div>
-                    <div>
-                        <span id="post-date-text">14초전</span> | 조회 4 | 현재 4
-                    </div>
-                </div>
-                <h1 class="post-title-main">근데 주말에 이렇게 글 많은 거 난 너무 신기함</h1>
-            </div>
-
-            <div class="post-content-text">
-                여기 여초인데 여자들은 다 주말에 약속있고 그러지 않나? 왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임
-            </div>
-
-            <div class="post-action-bar">
-                <button class="post-action-btn">🔖</button>
-                <button class="post-action-btn">👍</button>
-                <button class="post-action-btn">...</button>
-            </div>
-
-            <!-- Comment View Specific Ad (as in image_0.png) -->
-            <div class="comment-ad ad-pans">
-                <img src="images/ad_pans.png" alt="Coupang Ad" style="width: 100%; border-radius: 4px;">
-            </div>
-
-            <!-- Comment Section -->
-            <div id="comment-section">
-                <!-- Rendered by JS -->
-            </div>
-        </div>
-    </div> <!-- End Content Area -->
-
-    <!-- Comment Input Box (Static for demo) (Visible only in post view) -->
-    <div id="comment-input-area" style="display: none;">
-        <div class="avatar-box">
-            <span>U+</span> <span>🕒</span> <span>✅</span>
-        </div>
-        <div class="fake-input-container">
-            <div class="meta-row">
-                <strong>댓글 입력</strong> <span>...</span> <span style="position: absolute; right: 16px; border: 1px solid #ccc; padding: 1px 6px; border-radius: 10px; font-size: 11px;">댓글 기능</span>
-            </div>
-            <div class="input-box-main">
-                <textarea id="new-comment-text" rows="2" placeholder="댓글을 입력해주세요."></textarea>
-            </div>
-            <div class="submit-row">
-                <div class="add-icon">+</div>
-                <div class="confirm-text" onclick="addComment()">확인 또는 엔터키 연타</div>
-            </div>
-        </div>
     </div>
 
-    <!-- Fake Mobile Bottom Menu -->
     <div class="bottom-menu">
         <div class="bottom-menu-icon home">🏠 <span>홈</span></div>
         <div class="bottom-menu-icon">🔥 <span>인기글</span></div>
@@ -640,28 +287,86 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="categoryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>카테고리 관리</h2>
+            <button class="btn-close" onclick="closeModal('categoryModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <ul class="cat-list" id="cat-manage-list">
+                </ul>
+            <div class="cat-add-area">
+                <input type="text" id="new-cat-name" placeholder="새 카테고리명 입력">
+                <button onclick="addCategory()">추가</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="postModal">
+    <div class="modal-content" style="max-height: 95vh;">
+        <div class="modal-header">
+            <h2 id="modal-post-type" style="color:var(--instiz-green); font-size:16px;">게시판</h2>
+            <button class="btn-close" onclick="closeModal('postModal')">×</button>
+        </div>
+        <div class="modal-body" id="post-modal-body">
+            <div class="post-meta">
+                <div class="post-author">✅ 익명 <span>...</span></div>
+                <div id="modal-post-info">조회 0 | 댓글 0</div>
+            </div>
+            <h1 class="post-title-main" id="modal-post-title">제목</h1>
+            <div class="post-content-text" id="modal-post-content">내용</div>
+            
+            <div class="post-action-bar">
+                <button class="post-action-btn">🔖 스크랩</button>
+                <button class="post-action-btn">👍 추천</button>
+            </div>
+
+            <div class="comment-section" id="modal-comment-section">
+                </div>
+        </div>
+        <div class="comment-input-area">
+            <input type="text" id="new-comment-text" placeholder="댓글을 남겨보세요." onkeypress="if(event.key === 'Enter') addComment()">
+            <button onclick="addComment()">등록</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // --- Data ---
-    let categories = ["HOT", "이슈", "일상", "연예", "드영배", "장터"];
-    let posts = [
-        { id: 1, type: "일상", title: "주말에 글 많은 거 너무 신기함", image: null, author: "익인1", date: "14초전", views: 4, comments: 2, body: "여기 여초인데... 왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임" },
-        { id: 2, type: "일상", title: "나 ㅈㅈ하게 김지민 친친에 들어가고 싶음...", image: 'images/girl_glasses.jpg', comments: 7 },
-        { id: 3, type: "일상", title: "인플루언서들은 다 이래??", image: 'images/baked_goods.jpg', comments: 21 },
-        { id: 4, type: "정보기타", title: "추미애 아들 추씨 아닌 거 들을 때마다 충격...", image: null, comments: 11 }
+    // --- LocalStorage 설정 및 기본 데이터 ---
+    const defaultCategories = ["HOT", "이슈", "일상", "연예", "드영배", "장터"];
+    const defaultPosts = [
+        { id: 1, type: "일상", title: "주말에 글 많은 거 너무 신기함", image: null, author: "익명", views: 12, body: "여기 여초인데 여자들은 다 주말에 약속있고 그러지 않나? 왜 나같은 아싸랑 같이 여기서 글 쓰고 있는 거임" },
+        { id: 2, type: "연예", title: "나 진짜 김지민 친친에 들어가고 싶음...", image: 'https://via.placeholder.com/50/ff9999', author: "익명", views: 45, body: "친친 너무 부러움..." },
+        { id: 3, type: "이슈", title: "인플루언서들은 다 이래??", image: 'https://via.placeholder.com/50/99ff99', author: "익명", views: 120, body: "다들 협찬만 받고 사는듯" },
+        { id: 4, type: "정보기타", title: "추미애 아들 추씨 아닌 거 들을 때마다 충격...", image: null, author: "익명", views: 33, body: "몰랐음..." }
     ];
-    let postComments = [
-        { id: 101, postId: 1, author: "익인1", text: "냐도 신기해ㅜㅠ", date: "지금막" }
+    const defaultComments = [
+        { id: 101, postId: 1, author: "익인1", text: "냐도 신기해ㅜㅠ", date: "지금막", isMe: false }
     ];
+
+    // 스토리지에서 불러오거나 기본값 세팅
+    let categories = JSON.parse(localStorage.getItem('dcInstiz_categories')) || defaultCategories;
+    let posts = JSON.parse(localStorage.getItem('dcInstiz_posts')) || defaultPosts;
+    let postComments = JSON.parse(localStorage.getItem('dcInstiz_comments')) || defaultComments;
+    
+    let currentOpenPostId = null; // 현재 열려있는 게시글 ID 저장
+
+    function saveData() {
+        localStorage.setItem('dcInstiz_categories', JSON.stringify(categories));
+        localStorage.setItem('dcInstiz_posts', JSON.stringify(posts));
+        localStorage.setItem('dcInstiz_comments', JSON.stringify(postComments));
+    }
 
     // --- Core UI Functions ---
-
     function renderCategories() {
         const bar = document.getElementById('cat-bar');
         bar.innerHTML = '';
         categories.forEach((cat, index) => {
             const span = document.createElement('span');
             span.textContent = cat;
-            if (index === 0) span.classList.add('active'); // Default active
+            if (index === 0) span.classList.add('active'); // 첫번째 항목 활성화
             span.onclick = () => {
                 document.querySelectorAll('.category-bar span').forEach(s => s.classList.remove('active'));
                 span.classList.add('active');
@@ -672,28 +377,21 @@
 
     function renderPostList() {
         const listArea = document.getElementById('view-homepage');
-        // Keep the ad and section titles
         listArea.innerHTML = `
-            <img src="images/ad_girl_y2k.jpg" alt="AD" class="homepage-ad">
-            <div class="homepage-section-title">내가 마지막에 본 글 <span style="font-size: 13px; color: red;">🗑️</span></div>
-            <div class="post-card" onclick="openPost(1)">
-                <span class="post-type">잡담</span>
-                <span class="post-title">여자들이 한심하게 보는 남자 특징 <span class="post-comments">4</span></span>
-                <div class="post-image-preview" style="background-image: url('images/baked_goods.jpg');"></div>
-            </div>
-            <div class="homepage-section-title" style="margin-top: 20px;">전체 인기글</div>
+            <div class="homepage-section-title">전체 인기글</div>
         `;
 
-        // Render from 'posts' array, starting from index 1 to match image_2.png list
-        for (let i = 1; i < posts.length; i++) {
-            const p = posts[i];
+        posts.forEach(p => {
+            // 해당 게시글의 댓글 수 계산
+            const commentCount = postComments.filter(c => c.postId === p.id).length;
+
             const postCard = document.createElement('div');
             postCard.classList.add('post-card');
-            postCard.onclick = () => openPost(p.id);
+            postCard.onclick = () => openPostModal(p.id);
 
             const titleSpan = document.createElement('span');
             titleSpan.classList.add('post-title');
-            titleSpan.innerHTML = `<span class="post-type">${p.type}</span> ${p.title} <span class="post-comments">${p.comments}</span>`;
+            titleSpan.innerHTML = `<span class="post-type">${p.type}</span> ${p.title} <span class="post-comments">${commentCount > 0 ? commentCount : ''}</span>`;
 
             postCard.appendChild(titleSpan);
 
@@ -705,7 +403,7 @@
             }
 
             listArea.appendChild(postCard);
-        }
+        });
     }
 
     // --- Search Feature ---
@@ -714,125 +412,173 @@
         container.style.display = container.style.display === 'block' ? 'none' : 'block';
     };
 
-    document.getElementById('search-input').onkeyup = (e) => {
-        const query = e.target.value.toLowerCase();
-        if (query.length > 1) {
-            // Very simple filter for this proto
-            console.log("Searching for: " + query);
-        }
-    };
+    // --- Category Management (Modal) ---
+    function openCategoryModal() {
+        document.getElementById('categoryModal').style.display = 'flex';
+        renderCategoryManageList();
+    }
 
-    // --- Category Management Functions ---
-    document.querySelector('.header .icons span:last-child').onclick = () => {
-        const mgmt = document.getElementById('category-mgmt');
-        mgmt.style.display = mgmt.style.display === 'block' ? 'none' : 'block';
-    };
+    function renderCategoryManageList() {
+        const list = document.getElementById('cat-manage-list');
+        list.innerHTML = '';
+        categories.forEach((cat, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${cat}</span>
+                <div class="cat-actions">
+                    <button onclick="renameCategory(${index})">수정</button>
+                    <button class="del-btn" onclick="deleteCategory(${index})">삭제</button>
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    }
 
     function addCategory() {
-        const name = document.getElementById('new-cat-name').value;
-        if (name) {
+        const name = document.getElementById('new-cat-name').value.trim();
+        if (name && !categories.includes(name)) {
             categories.push(name);
+            saveData();
             renderCategories();
+            renderCategoryManageList();
             document.getElementById('new-cat-name').value = '';
+        } else if (categories.includes(name)) {
+            alert('이미 존재하는 카테고리입니다.');
         }
     }
 
-    function deleteCategory() {
-        const activeCat = document.querySelector('.category-bar span.active').textContent;
-        categories = categories.filter(c => c !== activeCat);
-        renderCategories();
-    }
-
-    function renameCategory() {
-        const newName = document.getElementById('new-cat-name').value;
-        if (!newName) return;
-        const activeSpan = document.querySelector('.category-bar span.active');
-        const oldName = activeSpan.textContent;
-        const index = categories.indexOf(oldName);
-        if (index !== -1) {
-            categories[index] = newName;
+    function deleteCategory(index) {
+        if(confirm(`'${categories[index]}' 카테고리를 삭제하시겠습니까?`)) {
+            categories.splice(index, 1);
+            saveData();
             renderCategories();
-            document.getElementById('new-cat-name').value = '';
+            renderCategoryManageList();
         }
     }
 
-    // --- Date Manipulation Function ---
-    function updatePostDate() {
-        const newDate = document.getElementById('fake-date-input').value;
-        if (newDate) {
-            document.getElementById('post-date-text').textContent = newDate;
+    function renameCategory(index) {
+        const newName = prompt('새 카테고리명을 입력하세요:', categories[index]);
+        if (newName && newName.trim() !== '') {
+            categories[index] = newName.trim();
+            saveData();
+            renderCategories();
+            renderCategoryManageList();
         }
     }
 
-    // --- Comment Manipulation Functions ---
+    // --- Post & Comment Management (Modal) ---
+    function openPostModal(postId) {
+        currentOpenPostId = postId;
+        const post = posts.find(p => p.id === postId);
+        if(!post) return;
+
+        // 데이터 채우기
+        document.getElementById('modal-post-type').textContent = post.type;
+        document.getElementById('modal-post-title').textContent = post.title;
+        document.getElementById('modal-post-content').innerHTML = (post.body || '').replace(/\n/g, '<br>');
+        
+        // 조회수 등 표시
+        const commentCount = postComments.filter(c => c.postId === postId).length;
+        document.getElementById('modal-post-info').textContent = `조회 ${post.views} | 댓글 ${commentCount}`;
+
+        renderComments(postId);
+        
+        // 모달 띄우기
+        document.getElementById('postModal').style.display = 'flex';
+    }
 
     function renderComments(postId) {
-        const commentArea = document.getElementById('comment-section');
-        commentArea.innerHTML = ''; // Clear previous
-
+        const commentArea = document.getElementById('modal-comment-section');
+        commentArea.innerHTML = ''; 
         const commentsToRender = postComments.filter(c => c.postId === postId);
+
+        if(commentsToRender.length === 0) {
+            commentArea.innerHTML = '<p style="color:#999; font-size:14px; text-align:center;">첫 댓글을 남겨보세요!</p>';
+            return;
+        }
 
         commentsToRender.forEach(c => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment');
-            if (c.author === "익인1") commentDiv.style.backgroundColor = '#f1f8e9'; // Match image_0.png green bg for user's comment
+            if (c.isMe) commentDiv.style.backgroundColor = '#f1f8e9'; // 내가 쓴 글 배경색
 
             commentDiv.innerHTML = `
-                <div class="avatar">✅</div>
+                <div class="avatar">👤</div>
                 <div class="content">
                     <div class="author-meta">
                         <span class="name">${c.author}</span>
-                        ${c.author === "익인1" ? '<span class="is-me">나</span>' : ''}
-                        <span>...</span>
+                        ${c.isMe ? '<span class="is-me">나</span>' : ''}
                     </div>
                     <div class="text">${c.text}</div>
-                    <div class="author-meta">
-                        <span class="is-me" style="background:var(--light-gray); color:var(--dark-gray); font-weight:normal;">답글</span>
-                        <span class="time">${c.date}</span>
-                    </div>
+                    <div class="time">${c.date} <span style="cursor:pointer; color:#999; margin-left:10px;">답글</span></div>
                 </div>
-                <button class="comment-delete-btn" onclick="deleteComment(${c.id}, ${postId})">삭제</button>
+                ${c.isMe ? `<button class="comment-delete-btn" onclick="deleteComment(${c.id})">삭제</button>` : ''}
             `;
             commentArea.appendChild(commentDiv);
         });
     }
 
     function addComment() {
-        const text = document.getElementById('new-comment-text').value;
-        if (text) {
+        const textInput = document.getElementById('new-comment-text');
+        const text = textInput.value.trim();
+        if (text && currentOpenPostId !== null) {
             const newComment = {
                 id: Date.now(),
-                postId: 1, // hardcoded to post 1 for this demo
-                author: "익인1", // hardcoded
+                postId: currentOpenPostId,
+                author: "익명(나)", 
                 text: text,
-                date: "지금막" // hardcoded
+                date: "방금 전",
+                isMe: true
             };
             postComments.push(newComment);
-            renderComments(1);
-            document.getElementById('new-comment-text').value = '';
+            saveData();
+            
+            // UI 업데이트
+            renderComments(currentOpenPostId);
+            renderPostList(); // 메인 피드 댓글수 갱신
+            
+            // 댓글수 업데이트
+            const post = posts.find(p => p.id === currentOpenPostId);
+            const commentCount = postComments.filter(c => c.postId === currentOpenPostId).length;
+            document.getElementById('modal-post-info').textContent = `조회 ${post.views} | 댓글 ${commentCount}`;
+            
+            textInput.value = '';
+            
+            // 스크롤 하단으로 이동
+            const modalBody = document.getElementById('post-modal-body');
+            modalBody.scrollTop = modalBody.scrollHeight;
         }
     }
 
-    function deleteComment(commentId, postId) {
-        postComments = postComments.filter(c => c.id !== commentId);
-        renderComments(postId);
+    function deleteComment(commentId) {
+        if(confirm('댓글을 삭제하시겠습니까?')) {
+            postComments = postComments.filter(c => c.id !== commentId);
+            saveData();
+            
+            renderComments(currentOpenPostId);
+            renderPostList(); // 메인 피드 댓글수 갱신
+            
+            const post = posts.find(p => p.id === currentOpenPostId);
+            const commentCount = postComments.filter(c => c.postId === currentOpenPostId).length;
+            document.getElementById('modal-post-info').textContent = `조회 ${post.views} | 댓글 ${commentCount}`;
+        }
     }
 
-    // --- Navigation ---
-    function openPost(postId) {
-        document.getElementById('view-homepage').style.display = 'none';
-        document.getElementById('view-post').style.display = 'block';
-        document.getElementById('comment-input-area').style.display = 'flex';
-        renderComments(postId);
+    // --- Modal 공통 기능 ---
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        if(modalId === 'postModal') {
+            currentOpenPostId = null;
+        }
     }
 
-    function goHome() {
-        document.getElementById('view-homepage').style.display = 'block';
-        document.getElementById('view-post').style.display = 'none';
-        document.getElementById('comment-input-area').style.display = 'none';
+    // 모달 바깥 영역 클릭 시 닫기
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.style.display = "none";
+            if(event.target.id === 'postModal') currentOpenPostId = null;
+        }
     }
-
-    document.querySelector('.bottom-menu-icon.home').onclick = goHome;
 
     // --- Initialization ---
     renderCategories();
